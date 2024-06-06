@@ -1,6 +1,10 @@
 import { Heading } from "@radix-ui/themes";
 import { api } from "~/trpc/server";
-import { CreatePostForm } from "./_forms/create-post";
+import {
+  CreatePostForm,
+  DynamicCreatePost,
+  OpenCreatePostDialog,
+} from "./_forms/create-post";
 import { DeleteButton } from "./delete-button";
 
 export default async function Home() {
@@ -13,9 +17,9 @@ export default async function Home() {
         <Heading as="h1" size="7" className="">
           {hello.greeting}
         </Heading>
-        <div className="flex flex-col">
-          <CreatePostForm />
-        </div>
+
+        <OpenCreatePostDialog />
+
         <div className="flex flex-col gap-8">
           {posts.map((post) => (
             <article key={post.id} className="flex border p-4">
