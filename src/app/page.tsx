@@ -1,6 +1,7 @@
 import { Heading } from "@radix-ui/themes";
 import { api } from "~/trpc/server";
 import { CreatePostForm } from "./_forms/create-post";
+import { DeleteButton } from "./delete-button";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "Craftzing" });
@@ -17,11 +18,14 @@ export default async function Home() {
         </div>
         <div className="flex flex-col gap-8">
           {posts.map((post) => (
-            <article key={post.id} className="border p-4">
-              <Heading as="h2" size="4">
-                {post.name}
-              </Heading>
-              <div>{post.body}</div>
+            <article key={post.id} className="flex border p-4">
+              <div className="flex-1">
+                <Heading as="h2" size="4">
+                  {post.name}
+                </Heading>
+                <div>{post.body}</div>
+              </div>
+              <DeleteButton id={post.id} />
             </article>
           ))}
         </div>

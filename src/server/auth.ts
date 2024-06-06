@@ -29,37 +29,6 @@ export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  callbacks: {
-    async session(session, user, token) {
-      if (user !== null) {
-        console.log(user);
-        session.user = user;
-      }
-      return await session;
-    },
-
-    async jwt({ token, user }) {
-      console.log(user);
-      return await token;
-    },
-  },
-  logger: {
-    error: (code, metadata) => {
-      console.log(code, metadata);
-    },
-    warn: (code) => {
-      console.log(code);
-    },
-    debug: (code, metadata) => {
-      console.log(code, metadata);
-    },
-  },
-  session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
-  jwt: {
-    secret: process.env.NEXTAUTH_SECRET,
-    maxAge: 60 * 60 * 24 * 30,
-  },
-
   providers: [
     CredentialsProvider({
       name: "Credentials",
