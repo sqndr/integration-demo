@@ -2,26 +2,31 @@
 
 import { api } from "~/trpc/react";
 import { DeleteIcon, Icon } from "./_components/icon";
+import ConfirmButton from "./_components/confirmation-button";
+import { useRouter } from "next/navigation";
+import { Button } from "~/components/ui/button";
 
 export const DeleteButton = ({ id }: { id: number }) => {
+  const router = useRouter();
   const utils = api.useUtils();
   const deleteMutation = api.post.deleteById.useMutation();
 
-  const handleSubmit = () => {
+  const handleDelete = () => {
     deleteMutation.mutate(id, {
       async onSuccess() {
         await utils.post.invalidate();
+        router.refresh();
       },
     });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <button aria-label="Delete this item" className="text-red-400">
+    <ConfirmButton onClick={handleDelete}>
+      <Button variant="destructive" size="icon" aria-label="Delete this item">
         <Icon>
           <DeleteIcon />
         </Icon>
-      </button>
-    </form>
+      </Button>
+    </ConfirmButton>
   );
 };
