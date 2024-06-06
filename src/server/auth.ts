@@ -1,14 +1,9 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
-
-import { env } from "~/env";
-import { db } from "~/server/db";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -26,6 +21,8 @@ declare module "next-auth" {
   }
 }
 
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -33,19 +30,58 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    async session(session, user, token) {
+      if (user !== null) {
+        console.log(user);
+        session.user = user;
+      }
+      return await session;
+    },
+
+    async jwt({ token, user }) {
+      console.log(user);
+      return await token;
+    },
   },
-  adapter: PrismaAdapter(db) as Adapter,
+  logger: {
+    error: (code, metadata) => {
+      console.log(code, metadata);
+    },
+    warn: (code) => {
+      console.log(code);
+    },
+    debug: (code, metadata) => {
+      console.log(code, metadata);
+    },
+  },
+  session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
+    maxAge: 60 * 60 * 24 * 30,
+  },
+
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    CredentialsProvider({
+      name: "Credentials",
+      // `credentials` is used to generate a form on the sign in page.
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials, req) {
+        // Add logic here to look up the user from the credentials supplied
+        const user = {
+          id: "1",
+          name: "J Smith",
+          email: "jsmith@example.com",
+          fuck: "true",
+        };
+
+        return user;
+      },
     }),
     /**
      * ...add more providers here.

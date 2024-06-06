@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { postSchema } from "~/app/_schemas/post";
 
 import {
   createTRPCRouter,
@@ -16,7 +17,7 @@ export const postRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(postSchema)
     .mutation(async ({ ctx, input }) => {
       // simulate a slow db call
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -24,7 +25,8 @@ export const postRouter = createTRPCRouter({
       return ctx.db.post.create({
         data: {
           name: input.name,
-          createdBy: { connect: { id: ctx.session.user.id } },
+          body: input.body,
+          createdBy: { connect: { id: "1" } },
         },
       });
     }),
@@ -34,9 +36,5 @@ export const postRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
       where: { createdBy: { id: ctx.session.user.id } },
     });
-  }),
-
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
   }),
 });
