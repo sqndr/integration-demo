@@ -53,7 +53,6 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ButtonProps>(
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        Ò
         {cloneElement(children, {
           ...props,
           onClick: shouldConfirm ? handleClose : originalOnClick,
