@@ -15,14 +15,14 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   shouldConfirm?: boolean;
   asChild?: boolean;
-  children: React.ReactElement;
+  children: React.ReactElement<ButtonProps>;
   confirmType?: "dialog" | "remove";
 }
 const ConfirmButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ shouldConfirm = true, children, onClick, ...props }, ref) => {
     const [open, setOpen] = useState(false);
 
-    const originalOnClick = onClick;
+    const originalOnClick = children.props.onClick;
 
     const handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -53,11 +53,10 @@ const ConfirmButton = forwardRef<HTMLButtonElement, ButtonProps>(
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
+        Ò
         {cloneElement(children, {
           ...props,
           onClick: shouldConfirm ? handleClose : originalOnClick,
-          ref,
         })}
       </>
     );

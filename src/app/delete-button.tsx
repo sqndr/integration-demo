@@ -21,8 +21,13 @@ export const DeleteButton = ({ id }: { id: number }) => {
   };
 
   return (
-    <ConfirmButton onClick={handleDelete}>
-      <Button variant="destructive" size="icon" aria-label="Delete this item">
+    <ConfirmButton>
+      <Button
+        variant="destructive"
+        size="icon"
+        aria-label="Delete this item"
+        onClick={handleDelete}
+      >
         <Icon>
           <DeleteIcon />
         </Icon>
