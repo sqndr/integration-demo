@@ -1,5 +1,7 @@
+"use client";
+
 import { Heading } from "@radix-ui/themes";
-import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 import {
   CreatePostForm,
   DynamicCreatePost,
@@ -7,17 +9,16 @@ import {
 } from "./_forms/create-post";
 import { DeleteButton } from "./delete-button";
 
-export default async function Home() {
-  const hello = await api.post.hello({ text: "Craftzing" });
-  const posts = await api.post.getLatest();
+export default function Home() {
+  const { isLoading, data: posts } = api.post.getLatest.useQuery();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="p-10">
       <div className="container m-auto flex flex-col gap-8">
-        <Heading as="h1" size="7" className="">
-          {hello.greeting}
-        </Heading>
-
         <OpenCreatePostDialog />
 
         <div className="flex flex-col gap-8">

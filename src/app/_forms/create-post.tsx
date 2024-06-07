@@ -42,7 +42,6 @@ export const CreatePostForm = () => {
         await utils.post.invalidate();
         form.reset();
         await setActiveAction(null);
-        router.refresh();
       },
     });
   });
